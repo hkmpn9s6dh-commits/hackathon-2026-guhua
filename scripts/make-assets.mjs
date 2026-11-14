@@ -6,7 +6,10 @@
  * 产出 submission/cover-1500x1000.png 与 submission/pinghou-demo.webm
  */
 
+import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { mkdir, rename, rm } from 'node:fs/promises';
+import { promisify } from 'node:util';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
@@ -16,6 +19,23 @@ const root = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const CHROME =
   process.env.PINGHOU_CHROME ??
   'C:/Users/张一/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe';
+
+const run = promisify(execFile);
+
+/** 找一台真能编 mp4 的 ffmpeg：环境变量 → imageio-ffmpeg 自带 → PATH。
+ *  （Playwright 那份是精简构建，只有 webm 封装，别用。） */
+function findFfmpeg() {
+  const candidates = [
+    process.env.FFMPEG,
+    'C:/Users/张一/AppData/Roaming/Python/Python38/site-packages/imageio_ffmpeg/binaries/ffmpeg-win64-v4.2.2.exe',
+    'ffmpeg',
+  ].filter(Boolean);
+  for (const c of candidates) {
+    if (c === 'ffmpeg') return c;
+    if (existsSync(c)) return c;
+  }
+  return null;
+}
 
 const out = resolve(root, 'submission');
 await mkdir(out, { recursive: true });
@@ -100,6 +120,29 @@ const server = await startServer(resolve(root, 'dist'), 4341);
     });
   }
   await browser.close();
+}
+
+// ---------- webm → mp4（交件平台多数只收 mp4） ----------
+const ffmpeg = findFfmpeg();
+if (ffmpeg) {
+  try {
+    await run(ffmpeg, [
+      '-y', '-hide_banner', '-loglevel', 'error',
+      '-i', resolve(out, 'pinghou-demo.webm'),
+      '-c:v', 'libx264', '-preset', 'medium', '-crf', '22',
+      '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an',
+      resolve(out, 'pinghou-demo.mp4'),
+    ]);
+    const { stdout } = await run(ffmpeg, ['-hide_banner', '-i', resolve(out, 'pinghou-demo.mp4')]).catch((e) => ({
+      stdout: String(e.stderr ?? ''),
+    }));
+    const line = String(stdout).split('\n').find((l) => l.includes('Stream #'));
+    console.log('mp4 ->', line?.trim() ?? 'ok');
+  } catch (e) {
+    console.log('mp4 转码失败（webm 仍在）:', String(e).slice(0, 120));
+  }
+} else {
+  console.log('没找到能编 mp4 的 ffmpeg：webm 已生成，mp4 需另找一台机器转。');
 }
 
 await server.close();

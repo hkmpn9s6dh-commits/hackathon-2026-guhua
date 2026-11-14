@@ -79,7 +79,8 @@ describe('素材与随包（AC-12）', () => {
     const bad: string[] = [];
     for (const f of files) {
       const text = readFileSync(f, 'utf8');
-      const hits = text.match(/https?:\/\/(?!127\.0\.0\.1|localhost)[^\s'"`)]+/g) ?? [];
+      // 只放行 XML 命名空间（不是网络请求）
+      const hits = (text.match(/https?:\/\/(?!127\.0\.0\.1|localhost|www\.w3\.org)[^\s'"`)]+/g) ?? []);
       for (const h of hits) bad.push(`${f}: ${h}`);
     }
     expect(bad).toEqual([]);
