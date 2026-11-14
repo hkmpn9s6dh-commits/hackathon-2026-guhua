@@ -1,0 +1,30 @@
+{
+  "name": "pinghou",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "屏后 — 举一支烛，走进顾闳中记住的那一夜。2026「古画 + AI & XR」创新大赛·入画游境。",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4321 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "e2e": "node scripts/e2e.mjs",
+    "measure": "node scripts/measure-ui.mjs",
+    "shot": "node scripts/shot.mjs",
+    "fonts": "py -3 scripts/subset-fonts.py",
+    "verify": "bash scripts/verify.sh"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "playwright-core": "^1.56.1",
+    "typescript": "6.0.3",
+    "vite": "8.3.7",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

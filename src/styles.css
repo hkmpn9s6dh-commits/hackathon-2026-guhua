@@ -1,0 +1,290 @@
+@font-face {
+  font-family: 'Pinghou Serif';
+  src: url('./assets/pinghou-serif.woff2') format('woff2');
+  font-weight: 400;
+  font-display: block;
+  unicode-range: U+0020-007E, U+2000-206F, U+3000-303F, U+4E00-9FFF, U+FF00-FFEF;
+}
+
+:root {
+  --void: #0a0908;
+  --bone: #e8ded0;
+  --dim: #8a7a68;
+  --rule: #3a2f26;
+  --candle: #e8b465;
+  --vermilion: #a8331f;
+  --serif: 'Pinghou Serif', 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--void);
+  color: var(--bone);
+  font-family: var(--serif);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  touch-action: none;
+  cursor: none;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--void);
+}
+
+/* ---------- 题跋 ---------- */
+
+.masthead {
+  position: fixed;
+  top: 7vh;
+  right: 5vw;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: 18px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.title {
+  margin: 0;
+  writing-mode: vertical-rl;
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 1.08;
+  letter-spacing: 0.14em;
+  font-weight: 400;
+  color: #f0e6d6;
+  text-shadow: 0 0 42px rgba(232, 180, 101, 0.16);
+}
+
+.subtitle {
+  margin: 0;
+  writing-mode: vertical-rl;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: 0.28em;
+  color: var(--dim);
+}
+
+.seal {
+  position: absolute;
+  top: calc(100% + 26px);
+  right: 4px;
+  width: 46px;
+  height: 46px;
+  border: 1.5px solid rgba(168, 51, 31, 0.82);
+  display: grid;
+  place-items: center;
+  background: rgba(168, 51, 31, 0.07);
+  transform: rotate(-1.2deg);
+}
+
+.seal span {
+  writing-mode: vertical-rl;
+  font-size: 15px;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  color: #c0503a;
+}
+
+/* ---------- 题记 ---------- */
+
+.note {
+  position: fixed;
+  left: 8vw;
+  bottom: 17vh;
+  max-width: min(34ch, 46vw);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 520ms ease, transform 520ms ease;
+  pointer-events: none;
+}
+
+.note.is-on {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.note-name {
+  margin: 0 0 10px;
+  font-size: 19px;
+  letter-spacing: 0.18em;
+  color: #d9c9b2;
+}
+
+.note-text {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.7;
+  letter-spacing: 0.06em;
+  color: #b9a992;
+}
+
+/* ---------- 五段刻度 ---------- */
+
+.ticks {
+  position: fixed;
+  left: 8vw;
+  right: 8vw;
+  bottom: 9vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.ticks::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(58, 47, 38, 0) 0%,
+    rgba(58, 47, 38, 0.55) 12%,
+    rgba(58, 47, 38, 0.55) 88%,
+    rgba(58, 47, 38, 0) 100%
+  );
+}
+
+.tick {
+  position: relative;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #46392e;
+  transition: background 600ms ease, box-shadow 600ms ease, transform 600ms ease;
+}
+
+.tick.is-on {
+  background: var(--vermilion);
+  transform: scale(1.5);
+  box-shadow: 0 0 12px rgba(168, 51, 31, 0.55);
+}
+
+/* ---------- 提示与出处 ---------- */
+
+.hint {
+  position: fixed;
+  left: 50%;
+  bottom: 4.4vh;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: rgba(185, 169, 146, 0.72);
+  transition: opacity 900ms ease;
+  pointer-events: none;
+  animation: breathe 4.6s ease-in-out infinite;
+}
+
+.hint.is-gone {
+  opacity: 0;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.credit {
+  position: fixed;
+  right: 3vw;
+  bottom: 2.4vh;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(168, 152, 130, 0.92);
+  pointer-events: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 720px) {
+  .masthead {
+    top: 5vh;
+    right: 6vw;
+    gap: 12px;
+  }
+  .title {
+    font-size: 30px;
+  }
+  .subtitle {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+  }
+  .seal {
+    width: 38px;
+    height: 38px;
+    top: calc(100% + 18px);
+  }
+  .seal span {
+    font-size: 12px;
+  }
+  .note {
+    left: 7vw;
+    right: 7vw;
+    bottom: 15vh;
+    max-width: none;
+  }
+  .note-name {
+    font-size: 17px;
+  }
+  .note-text {
+    font-size: 15px;
+  }
+  .ticks {
+    left: 7vw;
+    right: 7vw;
+    bottom: 8vh;
+  }
+  .credit {
+    right: 5vw;
+    bottom: 1.8vh;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint {
+    animation: none;
+    opacity: 0.7;
+  }
+  .note,
+  .tick {
+    transition: none;
+  }
+}
