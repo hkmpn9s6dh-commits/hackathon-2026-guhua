@@ -71,13 +71,18 @@ if grep -rIn --include='*.ts' -E 'sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}|AKIA[
   echo "源码里有密钥" >&2
   exit 1
 fi
-if find src -type f | grep -E '\.(png|jpe?g|webp|gif|mp3|wav|ogg|mp4)$'; then
-  echo "src 里出现了位图或音频（本作全部程序化绘制）" >&2
+if find src -type f | grep -E '\.(png|jpe?g|gif|mp3|wav|ogg|mp4)$'; then
+  echo "src 里出现了不该有的媒体（只允许五张 scene-*.webp）" >&2
+  exit 1
+fi
+SCENES=$(ls src/assets/scene-*.webp 2>/dev/null | wc -l)
+if [ "$SCENES" -ne 5 ]; then
+  echo "场景图应有 5 张，实际 ${SCENES} 张" >&2
   exit 1
 fi
 TOTAL=$(du -sb dist | awk '{print $1}')
-if [ "$TOTAL" -gt 460000 ]; then
-  echo "构建产物 ${TOTAL} 字节，超过 460 KB 预算" >&2
+if [ "$TOTAL" -gt 2000000 ]; then
+  echo "构建产物 ${TOTAL} 字节，超过 2 MB 预算" >&2
   exit 1
 fi
 if ! ls dist/assets/*.woff2 > /dev/null 2>&1; then

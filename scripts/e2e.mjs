@@ -98,26 +98,31 @@ async function main() {
     const noteName = (await page.locator('#note-name').innerText()).trim();
     check('AC-4 题记跟着段落换', noteName.startsWith('三'), noteName);
 
-    // 余痕：换一张干净的页面量，才有「照过之前」这个底
+    // 余痕：换一张干净的页面量。烛光横坐标总在视口中央，所以用「上下」来把光挪开。
     const memPage = await browser.newPage({ viewport: DESKTOP, deviceScaleFactor: 2 });
     await memPage.goto(base, { waitUntil: 'domcontentloaded' });
     await memPage.bringToFront();
     await waitReady(memPage);
     await memPage.waitForTimeout(400);
-    const sample = () =>
-      memPage.evaluate(() =>
-        window.__pinghou.sampleMemory(window.innerWidth / 2, window.innerHeight * 0.62),
-      );
+    const P = { x: DESKTOP.width / 2, y: DESKTOP.height * 0.3 };
+    const sample = () => memPage.evaluate(({ x, y }) => window.__pinghou.sampleMemory(x, y), P);
+
+    // 先把烛压到画面下部，让 P 完全没被照过
+    await memPage.mouse.move(P.x, DESKTOP.height * 0.86, { steps: 10 });
+    await memPage.waitForTimeout(1500);
     const empty = await sample();
-    await memPage.mouse.move(DESKTOP.width * 0.5, DESKTOP.height * 0.6, { steps: 8 });
+
+    // 把烛举到 P 上停两秒
+    await memPage.mouse.move(P.x, P.y, { steps: 12 });
     await memPage.waitForTimeout(2200);
     const lit = await sample();
-    check('AC-6 照过的地方留下余痕', lit > empty + 6, `${empty} → ${lit}`);
-    // 把烛举高，原来那一点就不再被照到
-    await memPage.mouse.move(DESKTOP.width * 0.5, DESKTOP.height * 0.2, { steps: 8 });
+    check('AC-6 照过的地方留下余痕', lit > empty + 20, `${empty} → ${lit}`);
+
+    // 再把烛压下去，P 不再被照到
+    await memPage.mouse.move(P.x, DESKTOP.height * 0.86, { steps: 10 });
     await memPage.waitForTimeout(10000);
     const faded = await sample();
-    check('AC-6 十秒后余痕衰减到三成以下', faded < lit * 0.45, `${lit} → ${faded}`);
+    check('AC-6 十秒后余痕衰减到三成以下', faded < lit * 0.35, `${lit} → ${faded}`);
     await memPage.close();
 
     // 键盘也能举烛

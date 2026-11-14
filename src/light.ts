@@ -21,11 +21,11 @@ export function createLightLayer(width: number, height: number, dpr: number): Li
   lit.width = Math.max(1, Math.round(width * dpr));
   lit.height = Math.max(1, Math.round(height * dpr));
   const stamp = document.createElement('canvas');
-  stamp.width = Math.max(1, Math.round(width * 0.4));
-  stamp.height = Math.max(1, Math.round(height * 0.4));
+  stamp.width = Math.max(1, Math.round(width * 0.55));
+  stamp.height = Math.max(1, Math.round(height * 0.55));
   const memory = document.createElement('canvas');
-  memory.width = Math.max(1, Math.round(width * 0.4));
-  memory.height = Math.max(1, Math.round(height * 0.4));
+  memory.width = Math.max(1, Math.round(width * 0.55));
+  memory.height = Math.max(1, Math.round(height * 0.55));
   const mctx = memory.getContext('2d');
   if (mctx) {
     mctx.fillStyle = '#000';
@@ -66,9 +66,10 @@ export function softDisc(
 ): CanvasGradient {
   const g = ctx.createRadialGradient(x, y, r * 0.12, x, y, r);
   g.addColorStop(0, 'rgba(255,255,255,1)');
-  g.addColorStop(0.5, 'rgba(255,255,255,0.97)');
-  g.addColorStop(0.78, 'rgba(255,255,255,0.62)');
-  g.addColorStop(0.92, 'rgba(255,255,255,0.18)');
+  g.addColorStop(0.4, 'rgba(255,255,255,0.97)');
+  g.addColorStop(0.66, 'rgba(255,255,255,0.8)');
+  g.addColorStop(0.85, 'rgba(255,255,255,0.38)');
+  g.addColorStop(0.95, 'rgba(255,255,255,0.12)');
   g.addColorStop(1, 'rgba(255,255,255,0)');
   return g;
 }
@@ -167,7 +168,7 @@ export function composite(
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   // 暗版：整间屋子都在，但不抢烛光
-  ctx.globalAlpha = 0.2;
+  ctx.globalAlpha = 0.4;
   ctx.drawImage(scene, 0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.globalAlpha = 1;
 
@@ -208,7 +209,7 @@ export function composite(
   }
 
   // 余痕
-  ctx.globalAlpha = 0.42;
+  ctx.globalAlpha = 0.2;
   ctx.drawImage(layer.memory, 0, 0, width, height);
   ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = 'source-over';
@@ -228,7 +229,7 @@ export function vignette(ctx: CanvasRenderingContext2D, width: number, height: n
     Math.max(width, height) * 0.78,
   );
   g.addColorStop(0, 'rgba(10,9,8,0)');
-  g.addColorStop(1, 'rgba(10,9,8,0.72)');
+  g.addColorStop(1, 'rgba(10,9,8,0.55)');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, width, height);
   ctx.setTransform(1, 0, 0, 1, 0, 0);

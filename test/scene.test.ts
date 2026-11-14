@@ -48,11 +48,22 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-describe('版权与随包（AC-12）', () => {
-  it('仓库里没有任何图片或音频素材', () => {
-    const files = walk(join(root, 'src'));
-    const media = files.filter((f) => /\.(png|jpe?g|gif|webp|avif|mp3|wav|ogg|m4a|mp4)$/i.test(f));
-    expect(media).toEqual([]);
+describe('素材与随包（AC-12）', () => {
+  it('场景图正好五张，且都是 webp', () => {
+    const files = walk(join(root, 'src', 'assets'));
+    const scenes = files.filter((f) => /scene-\d\.webp$/.test(f));
+    expect(scenes).toHaveLength(5);
+    for (const s of scenes) {
+      const kb = statSync(s).size / 1024;
+      expect(kb).toBeGreaterThan(60);
+      expect(kb).toBeLessThan(400);
+    }
+  });
+
+  it('除场景图与字体之外，没有别的素材', () => {
+    const files = walk(join(root, 'src', 'assets'));
+    const extra = files.filter((f) => !/scene-\d\.webp$/.test(f) && !/\.woff2$/.test(f) && !/OFL\.txt$/.test(f));
+    expect(extra).toEqual([]);
   });
 
   it('只有一个随包字体，且是 woff2 子集', () => {

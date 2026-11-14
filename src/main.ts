@@ -1,7 +1,7 @@
 import './styles.css';
 import { INK } from './palette.js';
 import { createLightLayer, buildLit, composite, flickerPoint, stampMemory, vignette, type LightLayer } from './light.js';
-import { drawScene, makeSilkTile } from './scene.js';
+import { createArt, drawScene, loadArt, type SceneArt } from './scene.js';
 import { createState, MEMORY_DECAY, sectionAtRatio, SECTIONS, step, type State } from './state.js';
 
 const stage = document.querySelector<HTMLCanvasElement>('#stage');
@@ -29,9 +29,8 @@ if (!sceneCtx) throw new Error('拿不到场景 context');
 let dpr = 1;
 let sceneScale = 1;
 let layer: LightLayer | null = null;
+let art: SceneArt = createArt();
 let state: State = createState(window.innerWidth, window.innerHeight);
-let silk: HTMLCanvasElement | null = null;
-void silk;
 let engaged = false;
 let lastSection = -1;
 
@@ -53,21 +52,23 @@ function layout(): void {
   const sameSize = Math.abs(w - state.width) < 1 && Math.abs(h - state.height) < 1;
   state = sameSize ? state : { ...createState(w, h), active: state.active, dwell: state.dwell };
   layer = createLightLayer(w, h, dpr);
-  if (!silk) silk = makeSilkTile();
 }
 
 /** 把场景画进离屏画布，再叠一层绢纹。 */
 function paintScene(time: number): void {
   sceneCtx!.setTransform(1, 0, 0, 1, 0, 0);
   sceneCtx!.scale(sceneScale, sceneScale);
-  drawScene(sceneCtx!, {
-    camera: state.camera,
-    width: state.width,
-    height: state.height,
-    time,
-    reduced,
-  });
-  // 绢纹只在光里出现，压在最后一步（见 light.composite），不铺满整张场景。
+  drawScene(
+    sceneCtx!,
+    {
+      camera: state.camera,
+      width: state.width,
+      height: state.height,
+      time,
+      reduced,
+    },
+    art,
+  );
   sceneCtx!.setTransform(1, 0, 0, 1, 0, 0);
 }
 
@@ -186,11 +187,14 @@ function frame(now: number): void {
 }
 
 layout();
-requestAnimationFrame(frame);
 
-// 首帧之后把「已就绪」标出来，给 e2e 与主人一个确定的信号。
-requestAnimationFrame(() => {
-  document.body.classList.add('is-ready');
+// 图先到，再开画：否则第一眼会是一块空地。
+void loadArt(art).then(() => {
+  paintScene(0);
+  requestAnimationFrame(frame);
+  requestAnimationFrame(() => {
+    document.body.classList.add('is-ready');
+  });
 });
 
 // 供 e2e 读的几个数字（不参与画面）

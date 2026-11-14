@@ -27,8 +27,8 @@ export const SECTION_COUNT = SECTIONS.length;
 export const DWELL_SHOW_MS = 1200;
 export const DWELL_HIDE_MS = 800;
 
-/** 余痕每秒的衰减比例：半衰期约 5.8 秒，10 秒后剩不到三成（AC-6）。 */
-export const MEMORY_DECAY = 0.125;
+/** 余痕每秒的衰减比例：半衰期约 4.6 秒，10 秒后剩两成出头（AC-6）。 */
+export const MEMORY_DECAY = 0.15;
 
 /** 余痕在 t 秒后的剩余亮度（0..1）。单测直接对着这条公式验。 */
 export function memoryLevel(t: number): number {
