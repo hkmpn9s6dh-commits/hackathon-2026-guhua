@@ -6,3 +6,4 @@ shots/*.png
 *.log
 .pub/
 .tmp/
+.dbg-*.mjs
