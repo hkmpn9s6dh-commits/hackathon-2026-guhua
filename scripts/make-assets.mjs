@@ -30,7 +30,7 @@ const server = await startServer(resolve(root, 'dist'), 4341);
   await page.waitForFunction(() => document.body.classList.contains('is-ready'));
   // 首屏那张：站在第一段，不触发题记
   await page.mouse.move(150, 500, { steps: 6 });
-  await page.waitForTimeout(1400);
+  await page.waitForTimeout(3200);
   // 海报模式：把页面自己的字都收起来，封面只留一副字
   await page.addStyleTag({
     content: '.masthead,.note,.ticks,.hint,.lede,.credit{display:none !important}',

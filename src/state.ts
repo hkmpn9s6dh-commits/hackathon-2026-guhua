@@ -38,6 +38,9 @@ export function memoryLevel(t: number): number {
 /** 光斑半径 = 短边 × 这个比例（AC-8）。 */
 export const LIGHT_RATIO = 0.3;
 
+/** 开场光斑比常态大一圈，让人一眼看见画；第一次交互后收回常态。 */
+export const LIGHT_INTRO_BOOST = 1.22;
+
 /** 镜头跟随的阻尼（每秒收敛比例）。 */
 export const CAMERA_DAMPING = 3.2;
 export const LIGHT_DAMPING = 14;

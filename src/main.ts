@@ -2,7 +2,7 @@ import './styles.css';
 import { INK } from './palette.js';
 import { createLightLayer, buildLit, composite, flickerPoint, stampMemory, vignette, type LightLayer } from './light.js';
 import { createArt, drawScene, loadArt, type SceneArt } from './scene.js';
-import { createState, MEMORY_DECAY, sectionAtRatio, SECTIONS, step, type State } from './state.js';
+import { createState, LIGHT_INTRO_BOOST, MEMORY_DECAY, sectionAtRatio, SECTIONS, step, type State } from './state.js';
 
 const stage = document.querySelector<HTMLCanvasElement>('#stage');
 const note = document.querySelector<HTMLDivElement>('#note');
@@ -172,9 +172,13 @@ function frame(now: number): void {
 
   if (layer) {
     const f = flickerPoint(state, clock, reduced);
+    // 开场 2.4 秒：像把烛点起来；光斑也从大一圈收回到常态
+    const intro = reduced ? 1 : Math.min(clock / 2.4, 1);
+    const boost = engaged ? 1 : 1 + (LIGHT_INTRO_BOOST - 1) * (1 - intro);
+    f.r *= boost;
     buildLit(layer, scene, state.width, state.height, dpr, f.x, f.y, f.r);
     stampMemory(layer, scene, state.width, state.height, f.x, f.y, f.r, dt, MEMORY_DECAY);
-    composite(ctx!, layer, scene, state.width, state.height, f.x, f.y, f.r, clock, reduced);
+    composite(ctx!, layer, scene, state.width, state.height, f.x, f.y, f.r, clock, reduced, intro);
     vignette(ctx!, state.width, state.height);
   }
 

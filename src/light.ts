@@ -161,19 +161,22 @@ export function composite(
   r: number,
   time: number,
   reduced: boolean,
+  intro = 1,
 ): void {
   const dpr = ctx.canvas.width / Math.max(width, 1);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = INK.void;
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  // 暗版：整间屋子都在，但不抢烛光
-  ctx.globalAlpha = 0.4;
+  // 暗版：整间屋子都在，但不抢烛光；开场时更暗，跟着「点烛」一起升上来
+  ctx.globalAlpha = 0.5 * intro;
   ctx.drawImage(scene, 0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.globalAlpha = 1;
 
   // 亮版：光斑里
+  ctx.globalAlpha = 0.5 + 0.5 * intro;
   ctx.drawImage(layer.lit, 0, 0);
+  ctx.globalAlpha = 1;
 
   // 之后的一切都按 CSS 像素算
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

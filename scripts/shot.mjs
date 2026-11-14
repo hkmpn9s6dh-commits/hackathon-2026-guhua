@@ -40,7 +40,7 @@ async function main() {
     await page.goto(server.url, { waitUntil: 'networkidle' });
     await page.waitForSelector('#stage');
     await page.waitForFunction(() => document.body.classList.contains('is-ready'));
-    await page.waitForTimeout(900);
+    await page.waitForTimeout(3000);
     await page.screenshot({ path: resolve(out, '01-first-screen.png') });
 
     // 一段：听乐
