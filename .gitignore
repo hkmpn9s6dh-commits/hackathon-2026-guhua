@@ -4,3 +4,5 @@ dist/
 shots/*.png
 !proof/shots/*.png
 *.log
+.pub/
+.tmp/
