@@ -166,8 +166,8 @@ export function composite(
   ctx.fillStyle = INK.void;
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  // 暗版：整间屋子都在，但几乎看不见
-  ctx.globalAlpha = 0.075;
+  // 暗版：整间屋子都在，但不抢烛光
+  ctx.globalAlpha = 0.2;
   ctx.drawImage(scene, 0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.globalAlpha = 1;
 
@@ -193,6 +193,19 @@ export function composite(
   ctx.globalCompositeOperation = 'lighter';
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, width, height);
+
+  // 头六秒：光斑边缘一圈细细的呼吸环，告诉观众「这圈是跟着你走的」
+  const ring = Math.max(0, 1 - time / 6);
+  if (ring > 0.01) {
+    const pulse = 0.55 + 0.45 * Math.sin(time * 2.6);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(232,180,101,${(0.16 * ring * pulse).toFixed(3)})`;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * (0.97 + 0.03 * pulse), 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.globalCompositeOperation = 'source-over';
+  }
 
   // 余痕
   ctx.globalAlpha = 0.42;

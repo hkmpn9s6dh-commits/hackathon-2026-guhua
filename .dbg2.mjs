@@ -1,0 +1,10 @@
+import { chromium } from 'playwright-core';
+const b = await chromium.launch({ executablePath: 'C:/Users/张一/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe' });
+const p = await b.newPage();
+p.on('console', m => console.log('CONSOLE', m.type(), m.text()));
+p.on('pageerror', e => console.log('ERROR', String(e)));
+p.on('requestfailed', r => console.log('REQFAIL', r.url(), r.failure()?.errorText));
+await p.goto('https://hkmpn9s6dh-commits.github.io/hackathon-2026-guhua/', { waitUntil: 'networkidle' });
+console.log('class=', await p.evaluate(() => document.body.className));
+console.log('canvas=', await p.evaluate(() => !!document.querySelector('#stage')));
+await b.close();

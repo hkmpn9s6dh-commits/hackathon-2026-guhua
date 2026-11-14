@@ -65,13 +65,13 @@ function drawSection(ctx: Ctx, index: number, x0: number, w: number, h: number, 
   switch (index) {
     case 0: {
       // 一 · 听乐：琵琶还倚在榻边，弦上有人按过
-      drawScreen(ctx, P(0.14), floorY + h * 0.02, h * 0.46);
+      drawScreen(ctx, P(0.2), floorY + h * 0.02, h * 0.46);
       drawMat(ctx, P(0.56), floorY + h * 0.05, w * 0.72, h * 0.07, rnd);
-      drawCouch(ctx, P(0.62), floorY + h * 0.02, w * 0.3, h * 0.14);
-      drawPipa(ctx, P(0.4), floorY + h * 0.07, h * 0.44, -0.36);
+      drawCouch(ctx, P(0.68), floorY + h * 0.02, w * 0.26, h * 0.14);
+      drawPipa(ctx, P(0.46), floorY + h * 0.075, h * 0.5, -0.28);
       drawTable(ctx, P(0.82), floorY + h * 0.03, w * 0.16, h * 0.1);
       drawCenser(ctx, P(0.82), floorY + h * 0.025, h * 0.026, t);
-      drawCandle(ctx, P(0.46), floorY + h * 0.06, h * 0.3, flick(t, index, reduced), sway(t, index, reduced));
+      drawCandle(ctx, P(0.56), floorY + h * 0.06, h * 0.3, flick(t, index, reduced), sway(t, index, reduced));
       drawCup(ctx, P(0.72), floorY - h * 0.1, h * 0.022);
       contactShadow(ctx, P(0.62), floorY + h * 0.03, w * 0.22, h * 0.03, 0.6);
       contactShadow(ctx, P(0.36), floorY + h * 0.075, w * 0.09, h * 0.024, 0.5);

@@ -16,7 +16,7 @@ export function drawScreen(ctx: Ctx, x: number, y: number, h: number, panels = 8
   ctx.translate(x, y);
   if (flip) ctx.scale(-1, 1);
   // 屏面
-  ctx.fillStyle = '#31251a';
+  ctx.fillStyle = '#3b2c1e';
   ctx.fillRect(-w / 2, -h, w, h);
   // 每扇的边框与缝
   for (let i = 0; i < panels; i += 1) {
@@ -28,7 +28,7 @@ export function drawScreen(ctx: Ctx, x: number, y: number, h: number, panels = 8
     ctx.fillRect(px + panelW - h * 0.004, -h, h * 0.008, h);
   }
   // 上下横档
-  ctx.fillStyle = 'rgba(58,44,32,0.95)';
+  ctx.fillStyle = 'rgba(96,74,50,0.95)';
   ctx.fillRect(-w / 2, -h, w, h * 0.018);
   ctx.fillRect(-w / 2, -h * 0.02, w, h * 0.02);
   // 屏面上的远山：一条折线，极淡
@@ -317,8 +317,8 @@ export function drawCouch(ctx: Ctx, x: number, y: number, w: number, h: number):
   // 台面
   ctx.fillStyle = '#3a2b1e';
   ctx.fillRect(-w / 2, -h, w, h * 0.16);
-  ctx.fillStyle = 'rgba(196,160,110,0.22)';
-  ctx.fillRect(-w / 2, -h, w, Math.max(1, h * 0.02));
+  ctx.fillStyle = 'rgba(214,178,124,0.5)';
+  ctx.fillRect(-w / 2, -h, w, Math.max(1.5, h * 0.028));
   // 腿
   ctx.fillStyle = ink(0.96);
   for (const dx of [-w * 0.42, w * 0.42]) {

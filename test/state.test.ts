@@ -6,6 +6,7 @@ import {
   createState,
   DWELL_HIDE_MS,
   DWELL_SHOW_MS,
+  LIGHT_RATIO,
   lightRadius,
   lightScreenX,
   MEMORY_DECAY,
@@ -62,8 +63,8 @@ describe('镜头与光斑', () => {
   });
 
   it('光斑半径随短边缩放', () => {
-    expect(lightRadius(1440, 900)).toBeCloseTo(900 * 0.26, 5);
-    expect(lightRadius(390, 844)).toBeCloseTo(390 * 0.26, 5);
+    expect(lightRadius(1440, 900)).toBeCloseTo(900 * LIGHT_RATIO, 5);
+    expect(lightRadius(390, 844)).toBeCloseTo(390 * LIGHT_RATIO, 5);
   });
 });
 

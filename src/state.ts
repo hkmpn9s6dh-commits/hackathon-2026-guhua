@@ -36,7 +36,7 @@ export function memoryLevel(t: number): number {
 }
 
 /** 光斑半径 = 短边 × 这个比例（AC-8）。 */
-export const LIGHT_RATIO = 0.26;
+export const LIGHT_RATIO = 0.3;
 
 /** 镜头跟随的阻尼（每秒收敛比例）。 */
 export const CAMERA_DAMPING = 3.2;
@@ -78,7 +78,7 @@ export function worldWidth(width: number): number {
 }
 
 export function createState(width: number, height: number): State {
-  const start: Vec = { x: width * 0.5, y: height * 0.54 };
+  const start: Vec = { x: width * 0.5, y: height * 0.5 };
   return {
     width,
     height,
