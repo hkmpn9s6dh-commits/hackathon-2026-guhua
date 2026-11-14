@@ -53,7 +53,12 @@ async function main() {
   try {
     const page = await browser.newPage({ viewport: DESKTOP, deviceScaleFactor: 2 });
     const requests = [];
+    const failed = [];
     page.on('request', (r) => requests.push(r.url()));
+    page.on('requestfailed', (r) => failed.push(`${r.url()} ${r.failure()?.errorText ?? ''}`));
+    page.on('response', (r) => {
+      if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`);
+    });
 
     const t0 = Date.now();
     await page.goto(base, { waitUntil: 'domcontentloaded' });
@@ -70,6 +75,57 @@ async function main() {
     const fontOk = await page.evaluate(() => document.fonts.check('16px "Pinghou Serif"'));
     check('AC-10 随包字体已加载', fontOk === true);
 
+    // 素材必须真的加载：五张都在，且都是带哈希的产物地址
+    const assets = await page.evaluate(() => window.__pinghou.assets());
+    const badAssets = assets.filter((a) => !a.ok);
+    check('AC-16 五张场景图都加载成功', badAssets.length === 0, badAssets.map((a) => a.src).join(' | '));
+    check('AC-16 场景图地址是构建产物（带哈希）', assets.every((a) => /scene-\d-[A-Za-z0-9_-]{6,}\.webp$/.test(a.src)), assets[0]?.src ?? '');
+    check('AC-16 没有任何失败的请求', failed.length === 0, failed.slice(0, 3).join(' | '));
+
+    // 画面必须真的画出东西：中心区的亮度与层次（黑屏会在这里被抓到）
+    const look = await page.evaluate(() => {
+      const c = document.querySelector('#stage');
+      const ctx = c.getContext('2d');
+      const w = c.width;
+      const h = c.height;
+      const d = ctx.getImageData(Math.round(w * 0.32), Math.round(h * 0.28), Math.round(w * 0.36), Math.round(h * 0.44)).data;
+      let sum = 0;
+      let min = 255;
+      let max = 0;
+      let n = 0;
+      for (let i = 0; i < d.length; i += 4) {
+        const v = (d[i] + d[i + 1] + d[i + 2]) / 3;
+        sum += v;
+        if (v < min) min = v;
+        if (v > max) max = v;
+        n += 1;
+      }
+      return { mean: sum / n, min, max, spread: max - min };
+    });
+    check('AC-17 首屏中心不是黑的', look.mean > 18, `均值 ${look.mean.toFixed(1)}/255`);
+    check('AC-17 画面有明暗层次', look.spread > 40, `极差 ${look.spread.toFixed(0)}`);
+
+    // 交互必须真的改变画面：同一个点，移动前后两次取样
+    const probe = await page.evaluate(() => {
+      const c = document.querySelector('#stage');
+      const ctx = c.getContext('2d');
+      const x = Math.round(c.width * 0.2);
+      const y = Math.round(c.height * 0.5);
+      const d = ctx.getImageData(x, y, 1, 1).data;
+      return (d[0] + d[1] + d[2]) / 3;
+    });
+    await page.mouse.move(DESKTOP.width * 0.22, DESKTOP.height * 0.5, { steps: 8 });
+    await page.waitForTimeout(900);
+    const after = await page.evaluate(() => {
+      const c = document.querySelector('#stage');
+      const ctx = c.getContext('2d');
+      const x = Math.round(c.width * 0.2);
+      const y = Math.round(c.height * 0.5);
+      const d = ctx.getImageData(x, y, 1, 1).data;
+      return (d[0] + d[1] + d[2]) / 3;
+    });
+    check('AC-18 移动指针会改变画面', Math.abs(after - probe) > 6, `${probe.toFixed(1)} → ${after.toFixed(1)}`);
+
     // 五段：
     const targets = [
       [0.08, 0],
@@ -83,6 +139,16 @@ async function main() {
       await page.waitForTimeout(1200);
       const got = await sectionOf(page);
       check(`AC-4 横向 ${Math.round(ratio * 100)}% → 第 ${want + 1} 段`, got === want, `拿到 ${got + 1}`);
+      const bright = await page.evaluate(() => {
+        const c = document.querySelector('#stage');
+        const ctx = c.getContext('2d');
+        const d = ctx.getImageData(Math.round(c.width * 0.35), Math.round(c.height * 0.3), Math.round(c.width * 0.3), Math.round(c.height * 0.4)).data;
+        let sum = 0;
+        let n = 0;
+        for (let i = 0; i < d.length; i += 4) { sum += (d[i] + d[i + 1] + d[i + 2]) / 3; n += 1; }
+        return sum / n;
+      });
+      check(`AC-17 第 ${want + 1} 段画面有内容`, bright > 18, `均值 ${bright.toFixed(1)}`);
     }
 
     // 题记门槛：先在浅处停 600ms，不出现；再停 1400ms，出现

@@ -215,6 +215,14 @@ Object.defineProperty(window, '__pinghou', {
     },
     sectionAtRatio,
     palette: INK,
+    /** 五张场景图各自的加载状态，给 e2e 用。 */
+    assets: () =>
+      art.images.map((img) => ({
+        src: img.currentSrc || img.src,
+        w: img.naturalWidth,
+        h: img.naturalHeight,
+        ok: img.complete && img.naturalWidth > 0,
+      })),
     /** 余痕层在某点的亮度（0..255），给 e2e 用。 */
     sampleMemory(x: number, y: number): number {
       if (!layer) return 0;

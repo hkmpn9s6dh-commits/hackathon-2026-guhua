@@ -36,7 +36,8 @@ body {
 
 body {
   touch-action: none;
-  cursor: none;
+  /* 一枚暖色细环：既是"镜头"，也告诉人这里可以动 */
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'><circle cx='14' cy='14' r='9' fill='none' stroke='%23e8b465' stroke-width='1.4' opacity='0.9'/><circle cx='14' cy='14' r='1.6' fill='%23e8b465'/></svg>") 14 14, crosshair;
 }
 
 #stage {

@@ -13,10 +13,16 @@ export interface SceneParams {
   reduced: boolean;
 }
 
-/** 五张场景图，按段落顺序。 */
-const SCENE_URLS = [1, 2, 3, 4, 5].map(
-  (i) => new URL(`./assets/scene-${i}.webp`, import.meta.url).href,
-);
+// 五张场景图，按段落顺序。
+// 注意：new URL() 里必须是**字面量**，Vite 才会把地址改写成带哈希的产物；
+// 写成模板字符串它不认，构建出来的地址会 404（v2 第一版就栽在这，整屏全黑）。
+const SCENE_URLS = [
+  new URL('./assets/scene-1.webp', import.meta.url).href,
+  new URL('./assets/scene-2.webp', import.meta.url).href,
+  new URL('./assets/scene-3.webp', import.meta.url).href,
+  new URL('./assets/scene-4.webp', import.meta.url).href,
+  new URL('./assets/scene-5.webp', import.meta.url).href,
+];
 
 export interface SceneArt {
   images: HTMLImageElement[];
