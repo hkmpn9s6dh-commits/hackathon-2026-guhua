@@ -25,8 +25,11 @@ const run = promisify(execFile);
 /** 找一台真能编 mp4 的 ffmpeg：环境变量 → imageio-ffmpeg 自带 → PATH。
  *  （Playwright 那份是精简构建，只有 webm 封装，别用。） */
 function findFfmpeg() {
+  // 本机真能编 mp4 的两处（2026-11-14 实测）：gyan 的 9.0.2 essentials 与 imageio-ffmpeg 自带。
+  // Playwright 的 ffmpeg-1013 是残废版（只有 webm 封装），别用 —— 中枢 C-20261113-25769ddc 早就记过。
   const candidates = [
     process.env.FFMPEG,
+    'C:/Users/张一/WorkBuddy/2026-10-01-18-10-01/_ref/ffmpeg_tmp/ffmpeg-9.0.2-essentials_build/bin/ffmpeg.exe',
     'C:/Users/张一/AppData/Roaming/Python/Python38/site-packages/imageio_ffmpeg/binaries/ffmpeg-win64-v4.2.2.exe',
     'ffmpeg',
   ].filter(Boolean);
