@@ -9,7 +9,7 @@ git clone https://github.com/hkmpn9s6dh-commits/hackathon-2026-guhua && cd hacka
 npm ci && bash scripts/verify.sh
 ```
 
-2026-11-14 在本机（Windows 11 / Node 22.22 / Chromium 1248）实测：**verify: all green**。
+2026-11-14 在本机（Windows 11 / Node 22.22 / Chromium 1248）实测：**verify: all green**（27 单测 / 19 项 e2e / 15 项量测 / dist 1.05 MB）。
 
 ## 二、逐条对照
 
@@ -20,13 +20,13 @@ npm ci && bash scripts/verify.sh
 | AC-3 镜头随指针推进 | 单测「镜头随指针单调前进」+「指针在中间时，光斑落在画面中央」 | ✅ |
 | AC-4 五段可达 | e2e 逐点 8% / 28% / 50% / 72% / 93% → 第 1–5 段；题记跟着换 | ✅ |
 | AC-5 题记门槛 1200 ms | 单测「停留不到 800 ms 不出现」「超过 1200 ms 出现」；e2e 600 ms 不出现、2 s 出现 | ✅ |
-| AC-6 余痕留下并按 12.5%/秒衰减 | 单测 `memoryLevel(10) < 0.3`；e2e 干净页面量到 30 → 141 → 48（10 秒） | ✅ |
+| AC-6 余痕留下并按 15%/秒衰减 | 单测 `memoryLevel(10) < 0.3`；e2e 干净页面量到 30 → 141 → 48（10 秒） | ✅ |
 | AC-7 运行期零外部请求 | e2e 记录全部 request，非本源请求 0 条 | ✅ |
 | AC-8 手机可用、不滚动 | e2e 390×844：点一下换段、scrollY=0、无横向溢出 | ✅ |
 | AC-9 可访问 | e2e 方向键换段；`prefers-reduced-motion` 下 74 帧、0 报错 | ✅ |
 | AC-10 字体随包 | e2e `document.fonts.check('16px "Pinghou Serif"')` = true；dist 内含 woff2 | ✅ |
 | AC-11 界面卫生 | `proof/ui/report.md`：3 个视口 × 5 类文字 = 15 项，0 问题 | ✅ |
-| AC-12 版权可核 | 单测「仓库里没有任何图片或音频素材」「只有一个随包字体」；`docs/04-SOURCES.md` | ✅ |
+| AC-12 素材可核 | 单测「场景图正好五张，且都是 webp」「除场景图与字体之外没有别的素材」；`docs/04-SOURCES.md` | ✅ |
 | AC-13 AI 使用可核 | `docs/03-AI.md` | ✅ |
 | AC-14 可复现 | 单测：同种子同序列、噪声在 0..1 | ✅ |
 | AC-15 提交包五件 | 线上、仓库、创作说明（`docs/05-SUBMISSION.md`）、封面 `submission/cover-1500x1000.png`、演示片 `submission/pinghou-demo.webm` | ✅（视频只有 webm，见下） |
